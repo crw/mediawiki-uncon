@@ -28,11 +28,11 @@ spec:
           ports:
             - containerPort: 80
               name: mediawiki
-          volumeMounts:
-            - name: mediawiki-persistent-storage
-              mountPath: /var/www/html
-      volumes:
-        - name: mediawiki-persistent-storage
-          gcePersistentDisk:
-            pdName: mediawiki-disk
-            fsType: ext4
+      #     volumeMounts:
+      #       - name: mediawiki-persistent-storage
+      #         mountPath: /var/www/html
+      # volumes:
+      #   - name: mediawiki-persistent-storage
+      #     gcePersistentDisk:
+      #       pdName: mediawiki-disk
+      #       fsType: ext4
