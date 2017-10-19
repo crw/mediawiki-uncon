@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mediawiki
+  labels:
+    app: mediawiki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediawiki
+  template:
+    metadata:
+      labels:
+        app: mediawiki
+    spec:
+      containers:
+        - image: mediawiki
+          name: mediawiki
+          env:
+          - name: MEDIAWIKI_DB_HOST
+            value: mysql:3306
+          - name: MEDIAWIKI_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: mediawiki
+          volumeMounts:
+            - name: mediawiki-persistent-storage
+              mountPath: /var/www/html
+      volumes:
+        - name: mediawiki-persistent-storage
+          gcePersistentDisk:
+            pdName: mediawiki-disk
+            fsType: ext4
