@@ -8,41 +8,30 @@
 # and their default values, but don't forget to make changes in _this_
 # file, not there.
 
-# If you customize your file layout, set $IP to the directory that contains
-# the other MediaWiki files. It will be used as a base to locate files.
-if( defined( 'MW_INSTALL_PATH' ) ) {
-	$IP = MW_INSTALL_PATH;
-} else {
-	$IP = dirname( __FILE__ );
+# Protect against web entry
+if ( !defined( 'MEDIAWIKI' ) ) {
+	exit;
 }
 
-$path = array( $IP, "$IP/includes", "$IP/languages" );
-set_include_path( implode( PATH_SEPARATOR, $path ) . PATH_SEPARATOR . get_include_path() );
-
-require_once( "includes/DefaultSettings.php" );
-
-# If PHP's memory limit is very low, some operations may fail.
-# ini_set( 'memory_limit', '20M' );
-
-if ( $wgCommandLineMode ) {
-	if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-		die( "This script must be run from the command line\n" );
-	}
-}
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
-$wgSitename         = "Uncon";
+$wgSitename      = "Uncon";
+$wgMetaNamespace = "Uncon";
 
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
+## For more information on customizing the URLs
+## (like /w/index.php/Page_title to /wiki/Page_title) please see:
+## https://www.mediawiki.org/wiki/Manual:Short_URL
 $wgScriptPath = "";
-$wgScriptExtension = ".php";
-$wgArticlePath = "$wgScriptPath/$1";
-$wgUsePathInfo = true;
 
-## For more information on customizing the URLs please see:
-## http://www.mediawiki.org/wiki/Manual:Short_URL
+## The protocol and server name to use in fully-qualified URLs
+$wgServer = "http://35.184.52.147";
+
+## The URL path to static resources (images, scripts, etc.)
+$wgResourceBasePath = $wgScriptPath;
+
 
 $wgEnableEmail      = true;
 $wgEnableUserEmail  = true;
@@ -78,8 +67,8 @@ $wgDBts2schema      = "public";
 $wgDBmysql5 = false;
 
 ## Shared memory settings
-$wgMainCacheType = CACHE_NONE; #CACHE_ACCEL;
-$wgMemCachedServers = array();
+$wgMainCacheType = CACHE_ACCEL; # CACHE_NONE;
+$wgMemCachedServers = [];
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then set this to true:
@@ -91,25 +80,38 @@ $wgUseImageMagick = true;
 $wgImageMagickConvertCommand = "/usr/bin/convert";
 $wgMaxShellMemory = 204800;
 
+# InstantCommons allows wiki to use images from https://commons.wikimedia.org
+$wgUseInstantCommons = false;
+
+# Periodically send a pingback to https://www.mediawiki.org/ with basic data
+# about this MediaWiki instance. The Wikimedia Foundation shares this data
+# with MediaWiki developers to help guide future development efforts.
+$wgPingback = true;
+
+## If you use ImageMagick (or any other shell command) on a
+## Linux server, this will need to be set to the name of an
+## available UTF-8 locale
+$wgShellLocale = "C.UTF-8";
+
 ## If you want to use image uploads under safe mode,
 ## create the directories images/archive, images/thumb and
 ## images/temp, and make them all writable. Then uncomment
 ## this, if it's not already uncommented:
 $wgHashedUploadDirectory = false;
 
-## If you have the appropriate support software installed
-## you can enable inline LaTeX equations:
-$wgUseTeX           = false;
-
-$wgLocalInterwiki   = $wgSitename;
-
+# Site language code, should be one of the list in ./languages/data/Names.php
 $wgLanguageCode = "en";
 
 $wgProxyKey = "52f8059febf857d812ee303230e80ef9f805121931c3de303908c5d3ea18751c";
+$wgSecretKey = "52f8059febf857d812ee303230e80ef9f805121931c3de303908c5d3ea18751c";
+
+# Site upgrade key. Must be set to a string (default provided) to turn on the
+# web installer while LocalSettings.php is in place
+$wgUpgradeKey = "10c057a52a473e31";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
-## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook':
-wfLoadSkin( 'Vector' );
+## names, ie 'vector', 'monobook':
+$wgDefaultSkin = "vector";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -123,10 +125,10 @@ $wgRightsIcon = "";
 
 $wgDiff3 = "/usr/bin/diff3";
 
-# When you make changes to this configuration file, this will make
-# sure that cached pages are cleared.
-$configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
-$wgCacheEpoch = max( $wgCacheEpoch, $configdate );
+// # When you make changes to this configuration file, this will make
+// # sure that cached pages are cleared.
+// $configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
+// $wgCacheEpoch = max( $wgCacheEpoch, $configdate );
 	
 $wgLogo = "/images/ys-logo.png";
 
@@ -139,15 +141,28 @@ $wgAllowExternalImages = true;
 ###
 # Disable reading by anonymous users
 $wgGroupPermissions['*']['read'] = false;
- 
 # Disable anonymous editing
 $wgGroupPermissions['*']['edit'] = false;
- 
 # Prevent new user registrations except by sysops
 $wgGroupPermissions['*']['createaccount'] = false;
 
-# Enable Gadgets
+# Enabled skins.
+# The following skins were automatically enabled:
+wfLoadSkin( 'CologneBlue' );
+wfLoadSkin( 'Modern' );
+wfLoadSkin( 'MonoBook' );
+wfLoadSkin( 'Vector' );
+
+# Enabled extensions. Most of the extensions are enabled by adding
+# wfLoadExtensions('ExtensionName');
+# to LocalSettings.php. Check specific extension documentation for more details.
+# The following extensions were automatically enabled:
 wfLoadExtension( 'Gadgets' );
+wfLoadExtension( 'Nuke' );
+wfLoadExtension( 'PdfHandler' );
+wfLoadExtension( 'SpamBlacklist' );
+wfLoadExtension( 'WikiEditor' );
+
 wfLoadExtension( 'ParserFunctions' );
 #require_once("$IP/extensions/LastModifiedLink/LastModifiedLink.php");
 
