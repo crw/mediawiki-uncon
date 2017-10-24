@@ -15,7 +15,7 @@ spec:
         app: mediawiki
     spec:
       containers:
-        - image: mediawiki
+        - image: gcr.io/uncon-183322/uncon-mediawiki:v1
           name: mediawiki
           env:
           - name: MEDIAWIKI_DB_HOST
@@ -29,16 +29,16 @@ spec:
             - containerPort: 80
               name: mediawiki
           volumeMounts:
-            - mountPath: /var/www/html/LocalSettings.php
-              name: mediawiki-localsettings
-              subPath: LocalSettings.php
-            # - name: mediawiki-persistent-storage
-            #   mountPath: /var/www/html
+            # - mountPath: /var/www/html/LocalSettings.php
+            #   name: mediawiki-localsettings
+            #   subPath: LocalSettings.php
+            - name: mediawiki-images-storage
+              mountPath: /var/www/html/images
       volumes:
-        - name: mediawiki-localsettings
-          configMap:
-            name: LocalSettings.php
-        # - name: mediawiki-persistent-storage
-        #   gcePersistentDisk:
-        #     pdName: mediawiki-disk
-        #     fsType: ext4
+        # - name: mediawiki-localsettings
+        #   configMap:
+        #     name: mediawiki-localsettings
+        - name: mediawiki-images-storage
+          gcePersistentDisk:
+            pdName: mediawiki-disk
+            fsType: ext4
